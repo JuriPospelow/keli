@@ -1,0 +1,102 @@
+@charset "utf-8";
+/* CSS Document für Schreinerei Meier */
+
+body {
+  max-width:60em;
+  margin: 1em auto;
+  background-color: beige;
+}
+
+@media (min-width: 30em) { 
+  #leistungen {
+    display: grid;
+    grid-template-columns: 1fr 12em;
+  }
+
+  #leistungen h2 {
+    grid-column: 1 / -1;
+  }
+}
+
+#angebot {
+  background-color: firebrick;
+  padding: 1em;
+  width: 10em;
+  text-align: center;
+}
+
+#angebot h3 {
+  font-size: 2em;
+  font-variant: small-caps;
+  color: lightyellow;
+}
+
+#angebot p {
+  color: white;
+}
+
+h1 {
+	background-color: firebrick;
+    color: beige;
+	padding: 0.5em;
+	font-family: sans-serif;
+	border-radius: 0 1em 1em 1em;
+}
+
+h2 {
+	font-size: 2.6em;
+	color: firebrick;
+	background-color: LightSalmon ;
+	border: thin solid;
+	font-family: cursive; 
+	text-align: center;
+/*     position: fixed;
+    top: 20em; */
+}
+
+p {
+	color: brown;
+	font-size: 1.1em;
+}
+
+header {
+	/* height: 5em; */
+	padding: 0 1em;
+	margin-bottom: 1em;
+  	display: grid;
+  	grid-template-columns: 6em 1fr 1fr;
+}
+
+header p:first-of-type{
+  font-size: 2em;
+  font-weight: bold;
+}
+
+header p:last-of-type {
+    transform: rotate(-5deg);
+    border: thin solid;
+    padding: 0.5em;
+    border-radius: 0.2em;
+    align-self: end;
+    width: 14em;
+}
+header #backlink {
+ display:inline-block;
+ text-shadow: none; 
+ color: transparent;
+ background: transparent;
+ background-size: contain;
+ width: 5em;
+ height: 3em;
+}
+
+footer {
+   	display: grid;
+  	grid-template-columns: 1fr 10em;
+/*   margin: auto;
+  /* margin-right: 120em; */ */
+}
+
+footer p {
+	text-align: center;
+}

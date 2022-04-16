@@ -1,0 +1,191 @@
+<!doctype html>
+ <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>Fresh Air Config</title>
+    <link rel="stylesheet" href="css/formate.css">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+  </head>
+  <body>
+    <header>
+		<a id="backlink" href="/"><img src="img/black_cat.svg" alt="black_cat"></a>
+		<p>the first Russian police sniffer cat </p>
+		<p>Now you can have a fresh air!</p>
+    </header>
+
+  <h2>	Snuggery Weather Station</h2>
+  <div id="chart-aqi_pm2.5" class="container"></div>
+  <div id="chart-aqi_pm10" class="container"></div>
+  <div id="chart-pm2.5" class="container"></div>
+  <div id="chart-pm10" class="container"></div>
+  
+    <footer>
+       <a href="kontakt.html">Kontakt</a>
+       <a href="kontakt.html#impressum">Impressum</a>
+       <p>© 2021 by selfHTML</p>
+    </footer>
+  </body>
+  
+<script>
+var chartT = new Highcharts.Chart({
+  chart:{ renderTo : 'chart-aqi_pm2.5' },
+  title: { text: 'AQI(PM2.5)' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#059e8a' }
+  },
+  xAxis: { type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'AQI' }
+    //title: { text: 'Temperature (Fahrenheit)' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartT.series[0].data.length > 40) {
+        chartT.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartT.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/aqi_pm25", true);
+  xhttp.send();
+}, 30000 ) ;
+
+var chartH = new Highcharts.Chart({
+  chart:{ renderTo:'chart-aqi_pm10' },
+  title: { text: 'AQI (PM10)' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: 'AQI' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartH.series[0].data.length > 40) {
+        chartH.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartH.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/aqi_pm10", true);
+  xhttp.send();
+}, 30000 ) ;
+
+var chartPM25 = new Highcharts.Chart({
+  chart:{ renderTo:'chart-pm2.5' },
+  title: { text: 'PM2.5' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#18009c' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: '\u00B5g/m\u00B3' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartPM25.series[0].data.length > 40) {
+        chartPM25.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartPM25.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/pm25", true);
+  xhttp.send();
+}, 30000 ) ;
+
+
+var chartPM10 = new Highcharts.Chart({
+  chart:{ renderTo:'chart-pm10' },
+  title: { text: 'PM10' },
+  series: [{
+    showInLegend: false,
+    data: []
+  }],
+  plotOptions: {
+    line: { animation: false,
+      dataLabels: { enabled: true }
+    },
+    series: { color: '#18009c' }
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: { text: '\u00B5g/m\u00B3' }
+  },
+  credits: { enabled: false }
+});
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = (new Date()).getTime(),
+          y = parseFloat(this.responseText);
+      //console.log(this.responseText);
+      if(chartPM10.series[0].data.length > 40) {
+        chartPM10.series[0].addPoint([x, y], true, true, true);
+      } else {
+        chartPM10.series[0].addPoint([x, y], true, false, true);
+      }
+    }
+  };
+  xhttp.open("GET", "/pm10", true);
+  xhttp.send();
+}, 30000 ) ;
+</script>
+ </html>
