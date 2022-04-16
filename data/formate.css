@@ -8,35 +8,35 @@ body {
 }
 
 h1 {
-	background-color: firebrick;
+    background-color: firebrick;
     color: beige;
-	padding: 0.5em;
-	font-family: sans-serif;
-	border-radius: 0 1em 1em 1em;
+    padding: 0.5em;
+    font-family: sans-serif;
+    border-radius: 0 1em 1em 1em;
 }
 
 h2 {
-	font-size: 2.6em;
-	color: firebrick;
-	background-color: LightSalmon ;
-	border: thin solid;
-	font-family: cursive; 
-	text-align: center;
+    font-size: 2.6em;
+    color: firebrick;
+    background-color: LightSalmon ;
+    border: thin solid;
+    font-family: cursive;
+    text-align: center;
 /*     position: fixed;
     top: 20em; */
 }
 
 p {
-	color: brown;
-	font-size: 1.1em;
+    color: brown;
+    font-size: 1.1em;
 }
 
 header {
-	/* height: 5em; */
-	padding: 0 1em;
-	margin-bottom: 1em;
-  	display: grid;
-  	grid-template-columns: 6em 1fr 1fr;
+    /* height: 5em; */
+    padding: 0 1em;
+    margin-bottom: 1em;
+    display: grid;
+    grid-template-columns: 6em 1fr 1fr;
 }
 
 header p:first-of-type{
@@ -54,7 +54,7 @@ header p:last-of-type {
 }
 header #backlink {
  display:inline-block;
- text-shadow: none; 
+ text-shadow: none;
  color: transparent;
  background: transparent;
  background-size: contain;
@@ -63,12 +63,12 @@ header #backlink {
 }
 
 footer {
-   	display: grid;
-  	grid-template-columns: 1fr 10em;
+    display: grid;
+    grid-template-columns: 1fr 10em;
 /*   margin: auto;
   /* margin-right: 120em; */ */
 }
 
 footer p {
-	text-align: center;
+    text-align: center;
 }
