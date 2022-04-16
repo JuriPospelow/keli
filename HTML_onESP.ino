@@ -1,5 +1,7 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
+#include "SPIFFS.h"
+
 
 const char* ssid = "FRITZ!Box 7590 XY";
 const char* password = "79384766866246325338";
@@ -24,7 +26,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <input type="submit" value="Submit">
   </form>
 </body></html>)rawliteral";
-/* 
+/*
 String message;
 
 void addTop(String &message)
@@ -53,7 +55,7 @@ void addBottom(String &message) {
  */
 // HTML web page to handle 3 input fields (input1, input2, input3)
 const char*  home(){
-/* 
+/*
   addTop(message);
 
   message += F("<article>\n"
@@ -96,7 +98,13 @@ const char*  home(){
 
 void setup(){
 	  Serial.begin(115200);
-	  
+
+  // Initialize SPIFFS
+  if(!SPIFFS.begin()){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -108,10 +116,10 @@ void setup(){
   Serial.println(WiFi.localIP());
 
   // Send web page with input fields to client
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/html", home());
-  });
-  
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+      request->send(SPIFFS, "/index.html");
+    });
+
 // Start server
   server.begin();
 }
