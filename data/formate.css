@@ -7,34 +7,6 @@ body {
   background-color: beige;
 }
 
-@media (min-width: 30em) { 
-  #leistungen {
-    display: grid;
-    grid-template-columns: 1fr 12em;
-  }
-
-  #leistungen h2 {
-    grid-column: 1 / -1;
-  }
-}
-
-#angebot {
-  background-color: firebrick;
-  padding: 1em;
-  width: 10em;
-  text-align: center;
-}
-
-#angebot h3 {
-  font-size: 2em;
-  font-variant: small-caps;
-  color: lightyellow;
-}
-
-#angebot p {
-  color: white;
-}
-
 h1 {
 	background-color: firebrick;
     color: beige;
