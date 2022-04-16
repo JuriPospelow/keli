@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fresh Air Config</title>
+    <title>Fresh Air Data</title>
     <link rel="stylesheet" type="text/css" href="formate.css">
   </head>
   <body>
@@ -17,14 +17,25 @@
       <tr>
         <th>Parameter</th>
         <th>Value</th>
+        <th>Unit</th>
+      </tr>
+      <tr>
+        <td>AQI(PM2.5)</td>
+        <td <span id="AQI_PM25">%aqi_pm25%</span></td>
+      </tr>
+      <tr>
+        <td>AQI(PM10)</td>
+        <td><span id="AQI_PM10">%aqi_pm10%</span></td>
       </tr>
       <tr>
         <td>PM2.5</td>
-        <td>50 €</td>
+        <td><span id="PM25">%pm25%</span> </td>
+        <td> µg/m³</td>
       </tr>
       <tr>
         <td>PM10</td>
-        <td>70 €</td>
+        <td><span id="PM10">%pm10%</span></td>
+        <td> µg/m³</td>
       </tr>
     </table>
     <footer>
@@ -33,6 +44,49 @@
        <a href="kontakt.html#impressum">Impressum</a>
        <p>© 2021 by selfHTML</p>
     </footer>
+  </body>
 
-</body>
+<script>
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("AQI_PM25").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/aqi_pm25", true);
+  xhttp.send();
+}, 30000 ) ;
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("PM25").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/pm25", true);
+  xhttp.send();
+}, 30000 ) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("AQI_PM10").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/aqi_pm10", true);
+  xhttp.send();
+}, 30000 ) ;
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("PM10").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/pm10", true);
+  xhttp.send();
+}, 30000 ) ;
+</script>
 </html>
