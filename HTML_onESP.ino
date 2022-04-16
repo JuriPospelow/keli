@@ -376,7 +376,7 @@ String get_aqi_pm10() {
 }
 
 void setup(){
-	  Serial.begin(115200);
+      Serial.begin(115200);
 
   // Initialize SPIFFS
   if(!SPIFFS.begin()){
@@ -444,7 +444,7 @@ void setup(){
   server.begin();
 }
 
-void 	loop(){
+void    loop(){
 //---------------- SDS ----------
   String result_SDS;
 //  Serial.println("LOOP " + String(millis()));
