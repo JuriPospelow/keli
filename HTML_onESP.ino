@@ -30,19 +30,24 @@ void setup(){
 
   // Send web page with input fields to client
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(SPIFFS, "/index.html");
+      request->send(SPIFFS, "/index.html", "text/html");
     });
 
     server.on("/config.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(SPIFFS, "/config.html");
+      request->send(SPIFFS, "/config.html", "text/html");
     });
     server.on("/graph.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(SPIFFS, "/graph.html");
+      request->send(SPIFFS, "/graph.html", "text/html");
     });
     server.on("/c_values.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-      request->send(SPIFFS, "/c_values.html");
+      request->send(SPIFFS, "/c_values.html", "text/html");
     });
-
+    server.on("/formate.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+      request->send(SPIFFS, "/formate.css", "text/css");
+    });
+    server.on("/black_cat.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
+      request->send(SPIFFS, "/black_cat.svg", "image/svg+xml");
+    });
 // Start server
   server.begin();
 }
