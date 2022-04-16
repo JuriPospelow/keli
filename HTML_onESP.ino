@@ -9,6 +9,14 @@ const char* password = "79384766866246325338";
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 
+
+String get_aqi_pm25() {
+
+ long t = random(15,25);
+     Serial.println(t);
+    return String(t);
+}
+
 void setup(){
 	  Serial.begin(115200);
 
@@ -48,6 +56,11 @@ void setup(){
     server.on("/black_cat.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
       request->send(SPIFFS, "/black_cat.svg", "image/svg+xml");
     });
+
+  server.on("/aqi_pm25", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", get_aqi_pm25().c_str());
+  });
+
 // Start server
   server.begin();
 }
