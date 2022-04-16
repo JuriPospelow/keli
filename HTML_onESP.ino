@@ -375,6 +375,8 @@ String get_aqi_pm10() {
     return String(AQI10);
 }
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 void setup(){
       Serial.begin(115200);
 
@@ -420,6 +422,9 @@ void setup(){
     server.on("/black_cat.svg", HTTP_GET, [](AsyncWebServerRequest *request) {
       request->send(SPIFFS, "/black_cat.svg", "image/svg+xml");
     });
+  server.onNotFound([](AsyncWebServerRequest *request){
+    request->send(404, "text/plain", "The content you are looking for was not found.");
+  });
 
   server.on("/aqi_pm25", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", get_aqi_pm25().c_str());
