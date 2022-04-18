@@ -1,3 +1,32 @@
+/*
+PUNKT A: Messverfahren
+
+Im Datenblatt steht:
+
+S.8 : "The data is stable when the sensor works after 30 seconds"
+bei Stutgart wird nur 15s (WARMUPTIME_SDS_MS) gewartet.
+
+Nur als Info:
+S.4: In Querry Mode das empfohlene Zeitinterval der Datenabfrage ist grosser als 3s.
+
+FRAGEN:
+1. Warum bei Stutgart ist anderes?
+
+TODO: WARMUPTIME_SDS_MS auf 30s vergrossen.
+
+PUNKT B: Datenablage
+TODO: Daten in zwischen Buffer schreiben. So können wir Seiten ständig aufbauen. Dann brauchen wir nach je Seiten Update nicht auf neue Daten zu warten.
+
+
+PUNKT C: WiFi
+TODO: Test with another ip adress (for example 192.168.1.200)
+TODO: Test without hard address in router for esp32
+TODO: Ereignisbasierte Update (WebSocket.h ???) und nicht jede 300ms Daten abfragen, sondern bei neu Laden sofort und dann je 1 Minute.
+TODO: Graph wird nicht gebaut, da Internet nicht erreichbar ist => Menu Punkt Graph raus - oder csv Datei anbinden?
+TODO:  im Netz brauche ich kein Menu Punkt Wifi Manager => entweder so mache, dass config hier auch übeschrieben werden kann (vielleicht es ist schon so - testen)
+            oder dieses Menu Punkt loeschen.
+
+*/
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include "SPIFFS.h"
