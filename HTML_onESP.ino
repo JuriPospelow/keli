@@ -491,7 +491,7 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
 
 // Initialize WiFi
 bool initWiFi() {
-  if(ssid=="" || ip==""){
+  if(ssid=="" && ip==""){
     Serial.println("Undefined SSID or IP address.");
     return false;
   }
