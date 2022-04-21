@@ -53,6 +53,13 @@ branch master in Ordner HTML_onESP git id e8010ab1ee822f00c000
 #include "SPIFFS.h"
 #include <HardwareSerial.h>
 
+const int ButtonPin =  5;
+const int LED_RED        =  19;// the number of the LED pin
+const int LED_GREEN   =  18;// the number of the LED pin
+const int LED_YELLOW =  23;// the number of the LED pin
+
+
+
 //---------------- SDS ----------
 #define ACTIVEPHASE (msSince(starttime) < cfg::sending_intervall_ms - SLEEPTIME_SDS_MS)
 #define READINGPHASE (msSince(starttime) > cfg::sending_intervall_ms - SLEEPTIME_SDS_MS - READINGTIME_SDS_MS)
@@ -95,8 +102,8 @@ String last_value_SDS_version;
 
 float AQI10 = 11;
 float AQI25 = 12;
-float last_value_SDS_P1 = 32;
-float last_value_SDS_P2 = 34;
+float last_value_SDS_P10 = 32;
+float last_value_SDS_P25 = 10;
 
 unsigned long act_milli;
 unsigned long starttime_SDS;
@@ -218,6 +225,43 @@ float  calcAQIpm10(float pm10) {
 }
 
 //-----------
+enum {
+  AIR_GOOD = 1,
+  AIR_ACCEPTABLE = 2,
+  AIR_SUBSTANDARD = 3,
+  AIR_POOR ,
+  AIR_BAD ,
+  AIR_VERY_BAD
+} AIR_CATEGORY;
+
+//------------------ from Metriful
+int interpretAQI(float AQI) {
+  if (AQI < 50) {
+    Serial.println("AIR_GOOD");
+    return AIR_GOOD;
+  }
+  else if (AQI < 100) {
+    Serial.println("AIR_ACCEPTABLE");
+    return AIR_ACCEPTABLE;
+  }
+  else if (AQI < 150) {
+    Serial.println("AIR_SUBSTANDARD");
+    return AIR_SUBSTANDARD;
+  }
+  else if (AQI < 200) {
+    Serial.println("AIR_POOR");
+    return AIR_POOR;
+  }
+  else if (AQI < 300) {
+    Serial.println("AIR_BAD");
+    return AIR_BAD;
+  }
+  else {
+    Serial.println("AIR_VERY_BAD");
+    return AIR_VERY_BAD;
+  }
+}
+// ----------------------------------------------------------------
 
 /*****************************************************************
  * send SDS011 command (start, stop, continuous mode, version    *
@@ -349,25 +393,25 @@ static void fetchSensorSDS(String& s) {
     }
 //    Serial.println("SDS011 stopp");
    if (calculate) {
-    last_value_SDS_P1 = -1;
-    last_value_SDS_P2 = -1;
+    last_value_SDS_P10 = -1;
+    last_value_SDS_P25 = -1;
     if (sds_val_count > 2) {
       sds_pm10_sum = sds_pm10_sum - sds_pm10_min - sds_pm10_max;
       sds_pm25_sum = sds_pm25_sum - sds_pm25_min - sds_pm25_max;
       sds_val_count = sds_val_count - 2;
     }
     if (sds_val_count > 0) {
-      last_value_SDS_P1 = float(sds_pm10_sum) / (sds_val_count * 10.0f);
-      last_value_SDS_P2 = float(sds_pm25_sum) / (sds_val_count * 10.0f);
+      last_value_SDS_P10 = float(sds_pm10_sum) / (sds_val_count * 10.0f);
+      last_value_SDS_P25 = float(sds_pm25_sum) / (sds_val_count * 10.0f);
 /*
-      add_Value2Json(s, F("SDS_P1"), F("PM10:  "), last_value_SDS_P1);
-      add_Value2Json(s, F("SDS_P2"), F("PM2.5: "), last_value_SDS_P2);
+      add_Value2Json(s, F("SDS_P1"), F("PM10:  "), last_value_SDS_P10);
+      add_Value2Json(s, F("SDS_P2"), F("PM2.5: "), last_value_SDS_P25);
 */
 //      debug_outln_info(FPSTR(DBG_TXT_SEP));
-      AQI10 = calcAQIpm10(last_value_SDS_P1);
-      AQI25 = calcAQIpm25(last_value_SDS_P2);
-      Serial.println("SDS_P1->PM10 : " + String(last_value_SDS_P1) + " " + String(millis()));
-      Serial.println("SDS_P2->PM2.5 : " + String(last_value_SDS_P2) + " " + String(millis()));
+      AQI10 = calcAQIpm10(last_value_SDS_P10);
+      AQI25 = calcAQIpm25(last_value_SDS_P25);
+      Serial.println("SDS_P1->PM10 : " + String(last_value_SDS_P10) + " " + String(millis()));
+      Serial.println("SDS_P2->PM2.5 : " + String(last_value_SDS_P25) + " " + String(millis()));
       Serial.println("AQI10 : " + String(AQI10) + " " + String(millis()));
       Serial.println("AQI2.5: " + String(AQI25) + " " + String(millis()));
 
@@ -436,13 +480,13 @@ AsyncWebServer server(80);
 
 
 String get_pm10() {
-     Serial.println(last_value_SDS_P1);
-    return String(last_value_SDS_P1);
+     Serial.println(last_value_SDS_P10);
+    return String(last_value_SDS_P10);
 }
 
 String get_pm25() {
-     Serial.println(last_value_SDS_P2);
-    return String(last_value_SDS_P2);
+     Serial.println(last_value_SDS_P25);
+    return String(last_value_SDS_P25);
 }
 
 String get_aqi_pm25() {
@@ -670,7 +714,15 @@ void setup(){
     });
     server.begin();
 }
+
+    pinMode(LED_RED, OUTPUT);
+    pinMode(LED_YELLOW, OUTPUT);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(ButtonPin, INPUT);
 }
+
+#define AQI_CATEGORY_PM10 interpretAQI(calcAQIpm10(last_value_SDS_P10))
+#define AQI_CATEGORY_PM25 interpretAQI(calcAQIpm25(last_value_SDS_P25))
 
 void    loop(){
 //---------------- SDS ----------
@@ -684,8 +736,23 @@ void    loop(){
 
     fetchSensorSDS(result_SDS);
 //    Serial.println("LEDs leuchten");  ------------------------------> TODO:jede Sekunde LEDs einsteuern ? bei Wertänderung?
-  }
-
+     if (AQI_CATEGORY_PM10  == AIR_GOOD &&  AQI_CATEGORY_PM25  == AIR_GOOD){
+     Serial.println("LED GREEN leuchten");
+     digitalWrite(LED_RED, LOW);
+     digitalWrite(LED_YELLOW, LOW);
+     digitalWrite(LED_GREEN, HIGH);
+    } else if (AQI_CATEGORY_PM10  > AIR_ACCEPTABLE ||  AQI_CATEGORY_PM25  > AIR_ACCEPTABLE){
+     Serial.println("LED ROT leuchten");
+     digitalWrite(LED_RED, HIGH);
+     digitalWrite(LED_GREEN, LOW);
+     digitalWrite(LED_YELLOW, LOW);
+      } else{
+     Serial.println("LED GELB leuchten");
+     digitalWrite(LED_RED, LOW);
+     digitalWrite(LED_GREEN, LOW);
+     digitalWrite(LED_YELLOW, HIGH);
+    }
+}
   if (sds_periud) { // Takt 145s
     starttime = millis();      // store the start time
     Serial.println("TAKT 145s " + String(millis()));
