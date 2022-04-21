@@ -26,6 +26,27 @@ TODO: Graph wird nicht gebaut, da Internet nicht erreichbar ist => Menu Punkt Gr
 TODO:  im Netz brauche ich kein Menu Punkt Wifi Manager => entweder so mache, dass config hier auch übeschrieben werden kann (vielleicht es ist schon so - testen)
             oder dieses Menu Punkt loeschen.
 
+TODO: one Style for WebSeite: use table in Wifi Manager, ..
+
+Brauche ich es? (Siehe unten)- Es ist unklar wie soll OnMessage in JavaScript die Daten bearbeiten, welche nicht in JSON Format sind.
+Sensor Config mit Buuton 1: intensiv Mode - messen 1Minute lang, dann Standart weiter.
+                           Button 2: Standart  - wie in Stutgart
+                            Slider: für Einstellung der Schlafzeit
+Ampel.html - oder andere Möglichkeit um im Farbe Ampel darzustellen.
+
+WebSocket für CurrentData.html um 300ms zu vermeiden
+Benutzen 2 slider für Messungdauer in Sensor Config um JSON Format zu nutzen.
+Benutzen JSON für Buffer - um Messwerte für 1 Stunde zu speichern und in Graph darstellen bzw. in CSV-Datei ablegen.
+
+Benutzung WEbSocket in CurrentData, SensorConfig - 1 Woche (15 Stunden),
+Benutzung Buffer für Graph - 1 Woche (15 Stunden)
+Alles Gerade ziehen, Style, Test 2 Wochen (30 Stunden)
+Benutzerhandbuch 3 Tage (6 Stunden)
+
+https://randomnerdtutorials.com/esp32-web-server-websocket-sliders/
+
+branch master in Ordner HTML_onESP git id e8010ab1ee822f00c000
+
 */
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
