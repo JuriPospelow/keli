@@ -47,7 +47,8 @@ https://randomnerdtutorials.com/esp32-web-server-websocket-sliders/
 
 branch master in Ordner HTML_onESP git id e8010ab1ee822f00c000
 
-TODO: Debouncer fuer Taster
+TODO: Debouncer fuer Taster, oder Schaltung anpassen
+TODO: Autoreset nach 28 Tagen des Betriebes
 
 
 */
@@ -89,9 +90,9 @@ void IRAM_ATTR isr() {
 
 
 #define SAMPLETIME_SDS_MS  1000
-#define WARMUPTIME_SDS_MS 15000
-#define READINGTIME_SDS_MS 5000
-#define SLEEPTIME_SDS_MS 125000
+// #define WARMUPTIME_SDS_MS 15000
+#define READINGTIME_SDS_MS 5000//45000
+#define SLEEPTIME_SDS_MS 125000 //85000
 
 #define msSince(timestamp_before) (act_milli - (timestamp_before))
 
@@ -254,27 +255,27 @@ enum {
 //------------------ from Metriful
 int interpretAQI(float AQI) {
   if (AQI < 50) {
-    Serial.println("AIR_GOOD");
+    // Serial.println("AIR_GOOD");
     return AIR_GOOD;
   }
   else if (AQI < 100) {
-    Serial.println("AIR_ACCEPTABLE");
+    // Serial.println("AIR_ACCEPTABLE");
     return AIR_ACCEPTABLE;
   }
   else if (AQI < 150) {
-    Serial.println("AIR_SUBSTANDARD");
+    // Serial.println("AIR_SUBSTANDARD");
     return AIR_SUBSTANDARD;
   }
   else if (AQI < 200) {
-    Serial.println("AIR_POOR");
+    // Serial.println("AIR_POOR");
     return AIR_POOR;
   }
   else if (AQI < 300) {
-    Serial.println("AIR_BAD");
+    // Serial.println("AIR_BAD");
     return AIR_BAD;
   }
   else {
-    Serial.println("AIR_VERY_BAD");
+    // Serial.println("AIR_VERY_BAD");
     return AIR_VERY_BAD;
   }
 }
@@ -647,12 +648,6 @@ void setup(){
   serialSDS.setTimeout((4 * 12 * 1000) / 9600);
 //----------------
 
-  //---------------- SDS ----------
-  powerOnTestSensors();
-  delay(1000);
-  starttime = millis();      // store the start time
-  //----------------
-
   // Load values saved in SPIFFS
   ssid = readFile(SPIFFS, ssidPath);
   pass = readFile(SPIFFS, passPath);
@@ -738,6 +733,12 @@ void setup(){
 
     pinMode(button1.PIN, INPUT_PULLUP);
     attachInterrupt(button1.PIN, isr, FALLING);
+
+  //---------------- SDS ----------
+  powerOnTestSensors();
+  delay(1000);
+  starttime = millis();      // store the start time
+  //----------------
 }
 
 #define AQI_CATEGORY_PM10 interpretAQI(calcAQIpm10(last_value_SDS_P10))
@@ -762,17 +763,17 @@ void    loop(){
     fetchSensorSDS(result_SDS);
 //    Serial.println("LEDs leuchten");  ------------------------------> TODO:jede Sekunde LEDs einsteuern ? bei Wertänderung?
      if (AQI_CATEGORY_PM10  == AIR_GOOD &&  AQI_CATEGORY_PM25  == AIR_GOOD){
-     Serial.println("LED GREEN leuchten");
+     // Serial.println("LED GREEN leuchten");
      digitalWrite(LED_RED, LOW);
      digitalWrite(LED_YELLOW, LOW);
      digitalWrite(LED_GREEN, HIGH);
     } else if (AQI_CATEGORY_PM10  > AIR_ACCEPTABLE ||  AQI_CATEGORY_PM25  > AIR_ACCEPTABLE){
-     Serial.println("LED ROT leuchten");
+     // Serial.println("LED ROT leuchten");
      digitalWrite(LED_RED, HIGH);
      digitalWrite(LED_GREEN, LOW);
      digitalWrite(LED_YELLOW, LOW);
       } else{
-     Serial.println("LED GELB leuchten");
+     // Serial.println("LED GELB leuchten");
      digitalWrite(LED_RED, LOW);
      digitalWrite(LED_GREEN, LOW);
      digitalWrite(LED_YELLOW, HIGH);
