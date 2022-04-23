@@ -47,6 +47,9 @@ https://randomnerdtutorials.com/esp32-web-server-websocket-sliders/
 
 branch master in Ordner HTML_onESP git id e8010ab1ee822f00c000
 
+TODO: Debouncer fuer Taster
+
+
 */
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
@@ -58,7 +61,27 @@ const int LED_RED        =  19;// the number of the LED pin
 const int LED_GREEN   =  18;// the number of the LED pin
 const int LED_YELLOW =  23;// the number of the LED pin
 
+// Es muss zuerst deklariert werden, ansonsten Compiler bringt ein Error Message
+enum class PmSensorCmd {
+  Start,
+  Stop,
+  ContinuousMode
+};
 
+// ----------------------------------- BUTTON -----------------------------------------------
+struct Button {
+  const uint8_t PIN;
+  uint32_t numberKeyPresses;
+  bool pressed;
+};
+
+Button button1 = {ButtonPin, 0, false};
+
+void IRAM_ATTR isr() {
+  button1.numberKeyPresses += 1;
+  button1.pressed = true;
+}
+// -------------------------------------------------------------------------
 
 //---------------- SDS ----------
 #define ACTIVEPHASE (msSince(starttime) < cfg::sending_intervall_ms - SLEEPTIME_SDS_MS)
@@ -86,12 +109,6 @@ namespace cfg {
 
   bool sds_read = SDS_READ;
 }
-
-enum class PmSensorCmd {
-  Start,
-  Stop,
-  ContinuousMode
-};
 
 enum {
   SDS_REPLY_HDR = 10,
@@ -718,7 +735,9 @@ void setup(){
     pinMode(LED_RED, OUTPUT);
     pinMode(LED_YELLOW, OUTPUT);
     pinMode(LED_GREEN, OUTPUT);
-    pinMode(ButtonPin, INPUT);
+
+    pinMode(button1.PIN, INPUT_PULLUP);
+    attachInterrupt(button1.PIN, isr, FALLING);
 }
 
 #define AQI_CATEGORY_PM10 interpretAQI(calcAQIpm10(last_value_SDS_P10))
@@ -730,6 +749,12 @@ void    loop(){
 //  Serial.println("LOOP " + String(millis()));
   act_milli = millis();
   sds_periud = msSince(starttime) > cfg::sending_intervall_ms;
+
+  if (button1.pressed) {
+      Serial.printf("Button 1 has been pressed %u times\n", button1.numberKeyPresses);
+      button1.pressed = false;
+  }
+
 
   if ((msSince(starttime_SDS) > SAMPLETIME_SDS_MS)){ // Takt 1s
     starttime_SDS = act_milli;
