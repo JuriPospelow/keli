@@ -25,6 +25,7 @@ TODO: Ereignisbasierte Update (WebSocket.h ???) und nicht jede 300ms Daten abfra
 TODO: Graph wird nicht gebaut, da Internet nicht erreichbar ist => Menu Punkt Graph raus - oder csv Datei anbinden?
 TODO:  im Netz brauche ich kein Menu Punkt Wifi Manager => entweder so mache, dass config hier auch übeschrieben werden kann (vielleicht es ist schon so - testen)
             oder dieses Menu Punkt loeschen.
+TODO: Test - Netz schon ausgewählt und in Dateien geschpeichert - aber in anderen unbekanten Netz Gerät anschalten.
 
 TODO: one Style for WebSeite: use table in Wifi Manager, ..
 
@@ -92,13 +93,14 @@ void IRAM_ATTR isr() {
  */
 #define WARMUPTIME_SDS_MS 15000
 #define READINGTIME_SDS_MS 5000//5000
-#define SLEEPTIME_SDS_MS 125000 //125000
+#define SLEEPTIME_SDS_MS 120000 //125000
 
 unsigned sds_periud_ms;
 unsigned sds_sleeping_phase_ms = SLEEPTIME_SDS_MS;
 unsigned sds_active_phase_ms;
 unsigned sds_reading_phase_ms = READINGTIME_SDS_MS;
 unsigned sds_warm_phase_ms = WARMUPTIME_SDS_MS;
+bool intensiv_mode;
 
 #define ACTIVEPHASE (msSince(starttime) < sds_active_phase_ms)
 #define READINGPHASE (msSince(starttime) > sds_warm_phase_ms)
@@ -401,6 +403,11 @@ static void fetchSensorSDS(String& s) {
               Serial.println("PM2.5 (sec.) : " + String(pm25_serial / 10.0f) + " " + String(millis()));
             sds_val_count++;
             calculate = true;
+                if (sds_reading_phase_ms == READINGTIME_SDS_MS){
+                    intensiv_mode = 0;
+                } else {
+                    intensiv_mode = 1;
+                }
           }
         }
 //        debug_outln_verbose(FPSTR(DBG_TXT_END_READING), FPSTR(SENSORS_SDS011));
@@ -763,6 +770,7 @@ void    loop(){
   if (button1.pressed) {
       Serial.printf("Button 1 has been pressed %u times\n", button1.numberKeyPresses);
       button1.pressed = false;
+      sds_reading_phase_ms = 15000; // wenn Taster in Reading Phase gedruckt wird, kommt SDS Error !, aber in SLEEP alles good!
   }
 
 
@@ -788,9 +796,10 @@ void    loop(){
      digitalWrite(LED_YELLOW, HIGH);
     }
 }
-  if (start_sds_periud) { // Takt 145s
+  if (start_sds_periud) { // Takt 145s - wie bei Stuttgrart
     starttime = millis();      // store the start time
     Serial.println("SDS011 start PERIUD " + String(millis()) + " / PERIUD = " + String(sds_periud_ms/1000) + "s");
+    if (intensiv_mode) sds_reading_phase_ms = READINGTIME_SDS_MS; // setzt Intensiv Modus zurück.
   }
 //----------------
 }
