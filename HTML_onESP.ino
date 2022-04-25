@@ -91,8 +91,8 @@ void IRAM_ATTR isr() {
 
  */
 #define WARMUPTIME_SDS_MS 15000
-#define READINGTIME_SDS_MS 5000//45000
-#define SLEEPTIME_SDS_MS 125000 //85000
+#define READINGTIME_SDS_MS 5000//5000
+#define SLEEPTIME_SDS_MS 125000 //125000
 
 unsigned sds_periud_ms;
 unsigned sds_sleeping_phase_ms = SLEEPTIME_SDS_MS;
@@ -100,8 +100,8 @@ unsigned sds_active_phase_ms;
 unsigned sds_reading_phase_ms = READINGTIME_SDS_MS;
 unsigned sds_warm_phase_ms = WARMUPTIME_SDS_MS;
 
-#define ACTIVEPHASE (msSince(starttime) < sds_periud_ms - SLEEPTIME_SDS_MS)
-#define READINGPHASE (msSince(starttime) > sds_periud_ms - SLEEPTIME_SDS_MS - READINGTIME_SDS_MS)
+#define ACTIVEPHASE (msSince(starttime) < sds_active_phase_ms)
+#define READINGPHASE (msSince(starttime) > sds_warm_phase_ms)
 
 
 #define SAMPLETIME_SDS_MS  1000
@@ -370,7 +370,7 @@ static void fetchSensorSDS(String& s) {
 
  if(ACTIVEPHASE) {
     if (! is_SDS_running) {
-      Serial.println("SDS011 start: "+ String(millis()));
+      Serial.println("SDS011 start ACTIVEPHASE: "+ String(millis()));
       is_SDS_running = SDS_cmd(PmSensorCmd::Start);
       SDS_waiting_for = SDS_REPLY_HDR;
     }
@@ -411,7 +411,7 @@ static void fetchSensorSDS(String& s) {
  } else {
      if (is_SDS_running) {
       is_SDS_running = SDS_cmd(PmSensorCmd::Stop);
-      Serial.println("SDS011 stopp 2: " + String(millis()));
+      Serial.println("SDS011 start SLEEPPHASE " + String(millis()));
     }
 //    Serial.println("SDS011 stopp");
    if (calculate) {
@@ -790,7 +790,7 @@ void    loop(){
 }
   if (start_sds_periud) { // Takt 145s
     starttime = millis();      // store the start time
-    Serial.println("TAKT 145s " + String(millis()));
+    Serial.println("SDS011 start PERIUD " + String(millis()) + " / PERIUD = " + String(sds_periud_ms/1000) + "s");
   }
 //----------------
 }
