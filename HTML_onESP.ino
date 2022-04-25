@@ -85,14 +85,26 @@ void IRAM_ATTR isr() {
 // -------------------------------------------------------------------------
 
 //---------------- SDS ----------
-#define ACTIVEPHASE (msSince(starttime) < cfg::sending_intervall_ms - SLEEPTIME_SDS_MS)
-#define READINGPHASE (msSince(starttime) > cfg::sending_intervall_ms - SLEEPTIME_SDS_MS - READINGTIME_SDS_MS)
+/*
+ sds_periud_ms = active_phase_ms + sds_sleeping_phase_ms
+ active_phase = warm_phase_ms + sds_reading_phase_ms
+
+ */
+#define WARMUPTIME_SDS_MS 15000
+#define READINGTIME_SDS_MS 5000//45000
+#define SLEEPTIME_SDS_MS 125000 //85000
+
+unsigned sds_periud_ms;
+unsigned sds_sleeping_phase_ms = SLEEPTIME_SDS_MS;
+unsigned sds_active_phase_ms;
+unsigned sds_reading_phase_ms = READINGTIME_SDS_MS;
+unsigned sds_warm_phase_ms = WARMUPTIME_SDS_MS;
+
+#define ACTIVEPHASE (msSince(starttime) < sds_periud_ms - SLEEPTIME_SDS_MS)
+#define READINGPHASE (msSince(starttime) > sds_periud_ms - SLEEPTIME_SDS_MS - READINGTIME_SDS_MS)
 
 
 #define SAMPLETIME_SDS_MS  1000
-// #define WARMUPTIME_SDS_MS 15000
-#define READINGTIME_SDS_MS 5000//45000
-#define SLEEPTIME_SDS_MS 125000 //85000
 
 #define msSince(timestamp_before) (act_milli - (timestamp_before))
 
@@ -101,15 +113,7 @@ void IRAM_ATTR isr() {
 #define UPDATE_MIN_MAX(MIN, MAX, SAMPLE) { UPDATE_MIN(MIN, SAMPLE); UPDATE_MAX(MAX, SAMPLE);}
 
 #define serialSDS (Serial2)
-#define SDS_READ 1
 
-
-namespace cfg {
-
-  unsigned sending_intervall_ms = 145000;
-
-  bool sds_read = SDS_READ;
-}
 
 enum {
   SDS_REPLY_HDR = 10,
@@ -138,7 +142,7 @@ uint32_t sds_pm25_min = 20000;
 uint32_t sds_val_count = 0;
 
 bool is_SDS_running = true;
-bool sds_periud = false;
+bool start_sds_periud = false;
 bool calculate = true;
 
 void SDS_rawcmd(const uint8_t cmd_head1, const uint8_t cmd_head2, const uint8_t cmd_head3) {
@@ -320,7 +324,7 @@ bool SDS_cmd(PmSensorCmd cmd) {
  *****************************************************************/
 static String SDS_version_date() {
 
-  if (cfg::sds_read && !last_value_SDS_version.length()) {
+  if (!last_value_SDS_version.length()) {
 //    debug_outln_verbose(FPSTR(DBG_TXT_START_READING), FPSTR(DBG_TXT_SDS011_VERSION_DATE));
     Serial.println("SDS011 start");
     is_SDS_running = SDS_cmd(PmSensorCmd::Start);
@@ -748,8 +752,13 @@ void    loop(){
 //---------------- SDS ----------
   String result_SDS;
 //  Serial.println("LOOP " + String(millis()));
+ sds_active_phase_ms = sds_warm_phase_ms + sds_reading_phase_ms;
+ sds_periud_ms = sds_active_phase_ms + sds_sleeping_phase_ms;
+
+
+
   act_milli = millis();
-  sds_periud = msSince(starttime) > cfg::sending_intervall_ms;
+  start_sds_periud = msSince(starttime) > sds_periud_ms;
 
   if (button1.pressed) {
       Serial.printf("Button 1 has been pressed %u times\n", button1.numberKeyPresses);
@@ -779,7 +788,7 @@ void    loop(){
      digitalWrite(LED_YELLOW, HIGH);
     }
 }
-  if (sds_periud) { // Takt 145s
+  if (start_sds_periud) { // Takt 145s
     starttime = millis();      // store the start time
     Serial.println("TAKT 145s " + String(millis()));
   }
