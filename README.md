@@ -1,3 +1,15 @@
+# Keli
+Messung von Feinstaub mit ESP32, SDS011.
+
+Durch die Verwendung eines Webservers ist es möglich, die aktuellen Sensorwerte von jedem beliebigen Gerät im Netzwerk abzurufen.
+
+|Start| Current Data | Graphs |
+| ------ | ------- | ------- |
+| ![hauptseite](https://user-images.githubusercontent.com/90817262/185370767-879ddc40-4589-4a10-a9f5-8c6a177b2be3.png) | ![current_data](https://user-images.githubusercontent.com/90817262/185370808-b79cdfa1-98c9-4cf4-9922-eb4261baa481.png) | ![graph](https://user-images.githubusercontent.com/90817262/185370827-6ee7954a-ca73-4e5f-929d-98884aa1f34a.png)
+
+
+
+
 # Stand 03.05.2022
 # Was ist gemacht:
 
